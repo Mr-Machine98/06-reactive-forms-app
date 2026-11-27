@@ -1,4 +1,13 @@
 import { AbstractControl, FormArray, FormGroup, ValidationErrors } from '@angular/forms';
+
+async function sleep() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(true);
+        }, 2500);
+    });
+}
+
 export class FormUtils {
 
     static namePattern = '([a-zA-Z]+) ([a-zA-Z]+)';
@@ -53,6 +62,8 @@ export class FormUtils {
                         return 'Invalid email pattern.';
                     }
                     return `Invalid format ${e}.`;
+                case 'emailTaken':
+                    return 'Email is already taken.';
                 default:
                     return `Invalid field ${e}.`;
             }
@@ -66,5 +77,17 @@ export class FormUtils {
         const field2Value = formGroup.get(field2)?.value;
         return field1Value === field2Value ? null : {passwordsNotEqual: true};
         }
+    }
+
+    static async checkingServerResponse(control: AbstractControl): Promise<ValidationErrors | null> {
+        console.log('Checking server response...');
+        await sleep();
+        const formValue = control.value;
+        if (formValue == 'hola@mundo.com') {
+            return {
+                emailTaken: true
+            };
+        }
+        return null;
     }
 }
